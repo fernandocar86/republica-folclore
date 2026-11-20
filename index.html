@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Rep. Folklore">
+<meta name="theme-color" content="#b4492d">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<title>República Folklore 2026</title>
+<style>
+:root{--bg:#faf3e8;--card:#fff;--ink:#2b1d14;--mute:#7a6757;--line:#e8dccb;--acc:#b4492d;--m:#b4492d;--p:#1f7a7a;--a:#c28a12;--u:#4b7a2e;--x:#7a6757;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1c1410;--card:#2a1f18;--ink:#f6ebdc;--mute:#b3a08c;--line:#3d2e24;--acc:#e0704f;--m:#e0704f;--p:#4cb8b8;--a:#e0aa3a;--u:#86b862;color-scheme:dark}}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-tap-highlight-color:transparent}
+header{padding:16px 16px 8px}h1{margin:0;font:700 22px Georgia,serif;letter-spacing:.2px}
+.sub{color:var(--mute);font-size:13px}
+.top{position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);padding:6px 16px 10px;z-index:5;border-bottom:1px solid var(--line)}
+.tabs,.chips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none}.tabs{margin-bottom:8px}
+button{font:inherit;color:inherit;cursor:pointer}
+.tab{flex:1;padding:10px;border-radius:12px;border:1.5px solid var(--line);background:var(--card);font-weight:600}
+.tab.on{background:var(--acc);border-color:var(--acc);color:#fff}
+.chip{white-space:nowrap;padding:6px 12px;border-radius:99px;border:1.5px solid var(--line);background:var(--card);font-size:14px}
+.chip.on{color:#fff;border-color:transparent}
+#banner{display:none;margin:8px 16px 0;padding:12px 14px;border-radius:12px;background:var(--acc);color:#fff;font-weight:600}
+main{padding:8px 16px 90px}
+.show{display:flex;gap:10px;align-items:center;background:var(--card);border:1px solid var(--line);border-left:5px solid var(--c);border-radius:12px;padding:10px 8px 10px 12px;margin:8px 0}
+.show.now{box-shadow:0 0 0 2px var(--c)}.show.past{opacity:.5}
+.t{min-width:54px;font-variant-numeric:tabular-nums;font-weight:700;font-size:14px}.t small{display:block;color:var(--mute);font-weight:400}
+.nm{flex:1;text-align:left;background:none;border:0;padding:4px 0;font-weight:600;font-size:16px}
+.st{font-size:12px;color:var(--c);font-weight:600}.badge{font-size:11px;background:var(--c);color:#fff;border-radius:6px;padding:1px 6px;margin-left:6px}
+.star{background:none;border:0;font-size:24px;padding:6px 10px;color:var(--mute)}.star.on{color:var(--a)}
+.dock{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));display:flex;gap:12px;align-items:center;font-size:14px;z-index:6}
+.sw{display:flex;align-items:center;gap:6px}.sw input{width:20px;height:20px;accent-color:var(--acc)}
+.test{margin-left:auto;border:1.5px solid var(--line);background:none;border-radius:10px;padding:6px 10px;font-size:13px}
+#sheet{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:flex-end;z-index:20}
+#sheet .in{background:var(--card);width:100%;max-height:80%;overflow:auto;border-radius:20px 20px 0 0;padding:20px 18px calc(24px + env(safe-area-inset-bottom,0px))}
+#sheet h2{margin:0 0 2px;font:700 22px Georgia,serif}#sheet .meta{color:var(--mute);font-size:13px;margin-bottom:12px}
+#sheet p{margin:8px 0}.lnk{display:inline-block;margin-top:6px;color:var(--acc);font-weight:600}
+.x{float:right;background:var(--bg);border:0;border-radius:99px;width:34px;height:34px;font-size:18px}
+.note{color:var(--mute);font-size:12px;text-align:center;margin:18px 0}
+</style>
+</head>
+<body>
+<header><h1>República Folklore</h1><div class="sub">21 y 22 de noviembre · Parque de la Ciudad, CABA</div></header>
+<div id="banner"></div>
+<div class="top"><div class="tabs" id="tabs"></div><div class="chips" id="chips"></div></div>
+<main id="list"></main>
+<div class="dock"><label class="sw"><input type="checkbox" id="alerts"> 🔔 Avisar 10 min antes</label><label class="sw"><input type="checkbox" id="favonly"> Solo ⭐</label><button class="test" id="test">Probar</button></div>
+<div id="sheet"><div class="in" id="sin"></div></div>
+
+<script>
+var ST={m:['Macro','--m'],p:['Personal','--p'],a:['Pampa','--a'],u:['La Pulpeña','--u'],x:['General','--x']};
+var PEN='Peña abierta, clases de danza y Campeonato de Truco de la República';
+var DAYS=[
+{id:'sab',lab:'Sábado 21',date:'2026-11-21',s:[
+['x','12:15','13:00','DJ Rama Cuti'],
+['m','14:00','14:30','Nicolás Membriani - Juanjo Abregú'],['m','15:00','15:30','La Callejera'],['m','16:15','16:45','Los Alonsitos'],['m','17:30','18:15','Los Nombradores del Alba'],['m','20:00','21:00','Abel Pintos'],['m','22:00','23:30','Soledad 30 años (Parte 1)'],
+['p','14:30','15:00','Catherine Vergnes'],['p','15:30','16:15','Nahuel Pennisi'],['p','16:45','','Cuti y Roberto Carabajal'],['p','19:00','20:00','Cazzu'],['p','21:00','22:00','Los Tekis'],['p','23:30','00:45','Chaqueño Palavecino'],
+['a','15:00','15:30','Malena Garnica'],['a','16:00','16:45','Orozco-Barrientos'],['a','17:15','18:00','Los 4 de Córdoba + Por Siempre Tucu'],['a','18:15','18:45','Nacho Cuéllar'],['a','19:00','19:45','Néstor Garnica'],['a','20:15','21:00','Los de Imaguaré'],['a','21:30','22:00','Nati Pastorutti'],['a','22:30','23:15','Los Tabaleros'],
+['u','13:30','14:00','Payadores Gaboto-Tokar / Wara Calpanchay'],['u','14:15','14:45','Payadores Gaboto-Tokar / Yoel Hernández'],['u','14:45','19:45',PEN],['u','19:45','20:15','Tomás Lipán'],['u','21:00','21:30','Los Bofill'],['u','22:00','22:30','Jesús Toledo'],['u','23:15','23:45','Tupá']]},
+{id:'dom',lab:'Domingo 22',date:'2026-11-22',s:[
+['x','12:15','13:30','DJ Rama Cuti'],
+['m','14:30','15:00','Sele Vera'],['m','15:30','16:15','OrellanaLucca'],['m','17:00','17:45','Los Manseros Santiagueños'],['m','18:45','19:30','Sergio Galleguillo'],['m','20:45','21:45','Jorge Rojas'],['m','22:45','23:45','Los Nocheros'],
+['p','15:00','15:30','Nicolás Membriani - Paquito Ocaño'],['p','16:15','17:00','Peteco con Riendas Libres'],['p','17:45','18:45','Ahyre'],['p','20:00','','Carafea'],['p','21:45','22:45','Lázaro Caballero'],['p','23:45','01:15','Soledad 30 años (Parte 2)'],
+['a','14:45','15:15','Diableros Jujeños'],['a','15:45','16:15','Juanjo Abregú'],['a','16:30','17:00','Wara Calpanchay'],['a','17:30','18:15','Campedrinos'],['a','18:45','19:15','Gauchos of the Pampa'],['a','19:30','20:15','Teresa Parodi'],['a','20:45','21:30','Dúo Coplanacu'],['a','22:00','22:45','Maggie Cullen'],['a','23:15','00:00','Indio Lucio Rojas'],
+['u','14:00','14:30','Payadores Gaboto-Tokar / Mariana Carrizo'],['u','14:30','15:00','Payadores Gaboto-Tokar'],['u','15:00','20:15',PEN],['u','20:15','20:45','La Bruja Salguero'],['u','21:30','22:00','Los Berbel'],['u','22:45','23:15','Dos Más Uno'],['u','00:00','00:30','Malena Garnica']]}
+];
+// Resúmenes: se buscan por nombre de artista (los shows combinados muestran cada artista).
+var B={
+'abel pintos':'Cantante de Bahía Blanca que saltó a la fama a fines de los 90 con un repertorio de folklore y balada. Se convirtió en uno de los artistas más convocantes del país, con éxitos como “Sin principio ni final”.',
+'soledad':'Soledad Pastorutti, “La Sole”, de Arequito (Santa Fe). Irrumpió en 1996 y revitalizó el folklore para el público masivo. Este festival celebra sus 30 años de carrera en dos shows, uno cada día.',
+'nati pastorutti':'Cantante santafesina, hermana de Soledad. Desarrolló una carrera propia dentro del folklore y la música popular.',
+'cazzu':'Julieta Cazzuchelli, artista nacida en Tucumán y figura del trap argentino y latino. Su paso por el festival acerca el folklore a las nuevas generaciones.',
+'los nocheros':'Grupo salteño formado en los años 80, uno de los más populares del folklore romántico argentino, con giras multitudinarias y reconocimiento internacional.',
+'teresa parodi':'Cantautora correntina, voz fundamental del folklore litoraleño. Compositora de canciones emblemáticas y figura cultural muy respetada, que también ocupó cargos de gestión cultural.',
+'dúo coplanacu':'Dúo santiagueño formado por Roberto Cantos y Julio Paz, con décadas de trayectoria. Referentes de la chacarera y la zamba, con una impronta poética muy propia.',
+'peteco con riendas libres':'Peteco Carabajal, violinista, compositor y cantante santiagueño, heredero de una de las familias más importantes de la chacarera. “Riendas Libres” es su banda.',
+'los manseros santiagueños':'Conjunto histórico de Santiago del Estero, emblema de la chacarera y de la música del monte santiagueño.',
+'cuti y roberto carabajal':'Hermanos santiagueños de la dinastía Carabajal, referentes de la chacarera y la música de Santiago del Estero.',
+'chaqueño palavecino':'Voz emblemática del folklore del norte, muy querido en peñas y festivales. Su show de cierre del sábado es uno de los más esperados.',
+'los tekis':'Banda jujeña referente de la música del norte argentino y la tradición andina, con presencia constante en los grandes festivales.',
+'nahuel pennisi':'Cantautor y guitarrista que combina folklore, pop y música popular. Ha recibido reconocimientos y nominaciones por su obra.',
+'mariana carrizo':'Copera salteña, una de las voces más reconocidas de la copla, tradición cantada de los Valles Calchaquíes y el noroeste.',
+'los nombradores del alba':'Conjunto salteño de larga trayectoria en el folklore del noroeste.',
+'jorge rojas':'Cantante de folklore romántico, uno de los más populares de la actualidad, con gran convocatoria en festivales y shows propios.',
+'payadores gaboto-tokar':'Payadores que animan el espacio de La Pulpeña. La payada es un arte criollo de improvisación cantada con guitarra.',
+'diableros jujeños':'Agrupación vinculada a las tradiciones del carnaval jujeño y su música.',
+'dj rama cuti':'DJ que abre la jornada con su set antes de los shows en vivo.'
+};
+function key(n){return n.toLowerCase().trim()}
+var $=function(i){return document.getElementById(i)};
+var S={day:'sab',stage:'all',fav:{},alerts:false,favonly:false,done:{}};
+try{var sv=JSON.parse(localStorage.getItem('rf26')||'{}');for(var k in sv)S[k]=sv[k]}catch(e){}
+function save(){try{localStorage.setItem('rf26',JSON.stringify({fav:S.fav,alerts:S.alerts,favonly:S.favonly,done:S.done}))}catch(e){}}
+function ts(date,hm,afterStart){var p=hm.split(':'),d=new Date(date+'T'+hm+':00-03:00');if(+p[0]<6)d=new Date(d.getTime()+864e5);return d.getTime()}
+DAYS.forEach(function(d){d.s=d.s.map(function(r,i){var st=ts(d.date,r[1]),en=r[2]?ts(d.date,r[2]):st+30*60000;if(en<=st)en+=864e5;return{id:d.id+i,stage:r[0],h:r[1],e:r[2],name:r[3],st:st,en:en,pen:r[3]===PEN}}).sort(function(a,b){return a.st-b.st})});
+function curDay(){return DAYS.filter(function(d){return d.id===S.day})[0]}
+function bioFor(name){return name.split(/ \/ | \+ | - /).map(function(s){return s.trim()}).filter(function(s){return B[key(s)]}).map(function(s){return{n:s,b:B[key(s)]}})}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function render(){
+  $('tabs').innerHTML=DAYS.map(function(d){return '<button class="tab'+(d.id===S.day?' on':'')+'" data-day="'+d.id+'">'+d.lab+'</button>'}).join('');
+  var ch=[['all','Todos','--acc']].concat(['m','p','a','u'].map(function(k){return[k,ST[k][0],ST[k][1]]}));
+  $('chips').innerHTML=ch.map(function(c){return '<button class="chip'+(S.stage===c[0]?' on':'')+'" style="'+(S.stage===c[0]?'background:var('+c[2]+')':'')+'" data-stage="'+c[0]+'">'+c[1]+'</button>'}).join('');
+  var now=Date.now(),L=curDay().s.filter(function(s){return S.stage==='all'||s.stage===S.stage||(s.stage==='x'&&S.stage==='all')});
+  $('list').innerHTML=L.map(function(s){var live=now>=s.st&&now<s.en,past=now>=s.en,c=ST[s.stage][1];
+    return '<div class="show'+(live?' now':'')+(past?' past':'')+'" style="--c:var('+c+')"><div class="t">'+s.h+'<small>'+(s.e?s.e:'')+'</small></div><div style="flex:1"><button class="nm" data-id="'+s.id+'">'+esc(s.name)+'</button><div class="st">'+ST[s.stage][0]+(live?'<span class="badge">EN VIVO</span>':'')+'</div></div>'+(s.pen?'':'<button class="star'+(S.fav[s.id]?' on':'')+'" data-fav="'+s.id+'" aria-label="Favorito">'+(S.fav[s.id]?'★':'☆')+'</button>')+'</div>'}).join('')+'<div class="note">Horarios publicados por la organización; pueden cambiar. Hora de Argentina.</div>';
+}
+function findShow(id){var r;DAYS.forEach(function(d){d.s.forEach(function(s){if(s.id===id)r=s})});return r}
+function openSheet(id){var s=findShow(id),bs=s.pen?[]:bioFor(s.name),html='<button class="x" id="cl">✕</button><h2>'+esc(s.name)+'</h2><div class="meta">'+ST[s.stage][0]+' · '+s.h+(s.e?' a '+s.e:'')+'</div>';
+  if(s.pen)html+='<p>Espacio abierto en La Pulpeña con peña, clases de danza y el Campeonato de Truco de la República durante toda la tarde.</p>';
+  else if(bs.length)html+=bs.map(function(x){return (bs.length>1?'<p><b>'+esc(x.n)+'</b></p>':'')+'<p>'+esc(x.b)+'</p>'}).join('');
+  else html+='<p>Todavía no tenemos un resumen cargado para este artista.</p>';
+  if(!s.pen)html+='<a class="lnk" target="_blank" rel="noopener" href="https://www.google.com/search?q='+encodeURIComponent(s.name.split(/ \/ | \+ | - /)[0]+' folklore biografía')+'">Buscar más sobre su carrera →</a>';
+  $('sin').innerHTML=html;$('sheet').style.display='flex'}
+function beep(){try{var c=new (window.AudioContext||window.webkitAudioContext)(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=660;g.gain.value=.15;o.start();o.stop(c.currentTime+.25)}catch(e){}}
+function alertMsg(txt){var b=$('banner');b.textContent='🔔 '+txt;b.style.display='block';try{navigator.vibrate&&navigator.vibrate([200,100,200])}catch(e){}beep();
+  try{if('Notification' in window&&Notification.permission==='granted'){if(navigator.serviceWorker)navigator.serviceWorker.ready.then(function(r){r.showNotification('República Folklore',{body:txt,icon:'icon-192.png'})});else new Notification('República Folklore',{body:txt})}}catch(e){}
+  setTimeout(function(){b.style.display='none'},20000)}
+function check(){
+  if(!S.alerts)return;var now=Date.now(),g={};
+  DAYS.forEach(function(d){d.s.forEach(function(s){var dt=s.st-now;if(s.pen||dt<=0||dt>10*60000||S.done[s.id])return;if(S.favonly&&!S.fav[s.id])return;S.done[s.id]=1;(g[s.h]=g[s.h]||[]).push(ST[s.stage][0]+': '+s.name)})});
+  Object.keys(g).forEach(function(h){alertMsg('En 10 min ('+h+') → '+g[h].join(' · '))});
+  if(Object.keys(g).length){save();render()}
+}
+document.addEventListener('click',function(e){var t=e.target;
+  if(t.dataset.day){S.day=t.dataset.day;render()}
+  else if(t.dataset.stage){S.stage=t.dataset.stage;render()}
+  else if(t.dataset.fav){S.fav[t.dataset.fav]=!S.fav[t.dataset.fav];save();render()}
+  else if(t.dataset.id)openSheet(t.dataset.id);
+  else if(t.id==='cl'||t.id==='sheet')$('sheet').style.display='none'});
+$('alerts').checked=S.alerts;$('favonly').checked=S.favonly;
+$('alerts').onchange=function(){S.alerts=this.checked;save();
+  if(S.alerts){try{if('Notification' in window&&Notification.permission==='default')Notification.requestPermission()}catch(e){}check()}};
+$('favonly').onchange=function(){S.favonly=this.checked;save()};
+$('test').onclick=function(){alertMsg('Prueba: en 10 min → Macro: Abel Pintos · Personal: Cazzu')};
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(function(){});
+render();check();setInterval(function(){check();render()},30000);
+</script>
+</body>
+</html>
