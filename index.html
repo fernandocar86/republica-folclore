@@ -41,6 +41,7 @@ main{padding:8px 16px 90px}
 #sheet h2{margin:0 0 2px;font:700 22px Georgia,serif}#sheet .meta{color:var(--mute);font-size:13px;margin-bottom:12px}
 #sheet p{margin:8px 0}.lnk{display:inline-block;margin-top:6px;color:var(--acc);font-weight:600}
 .x{float:right;background:var(--bg);border:0;border-radius:99px;width:34px;height:34px;font-size:18px}
+.soc{display:flex;gap:10px;margin:8px 0 4px;flex-wrap:wrap}.soc a{width:42px;height:42px;border-radius:12px;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;color:var(--c)}.soc svg{width:22px;height:22px}
 .note{color:var(--mute);font-size:12px;text-align:center;margin:18px 0}
 </style>
 </head>
@@ -89,9 +90,53 @@ var B={
 'jorge rojas':'Cantante de folklore romántico, uno de los más populares de la actualidad, con gran convocatoria en festivales y shows propios.',
 'payadores gaboto-tokar':'Payadores que animan el espacio de La Pulpeña. La payada es un arte criollo de improvisación cantada con guitarra.',
 'diableros jujeños':'Agrupación vinculada a las tradiciones del carnaval jujeño y su música.',
-'dj rama cuti':'DJ que abre la jornada con su set antes de los shows en vivo.'
+'dj rama cuti':'DJ que abre la jornada con su set antes de los shows en vivo.',
+'catherine vergnes':'Catherine Vergnes nació en Paysandú, Uruguay. Psicóloga de profesión y cantautora de raíz folclórica. Participó en Cosquin, Jesús María, Diamante y El Calden en Argentina',
+'nicolás membriani':'Nicolás Membriani es el payador oficial del festival Jesús María.',
+'juanjo abregú':'Juanjo Abregú es violinista.',
+'nicolás membriani - juanjo abregú':'Nicolás Membriani es el payador oficial del festival Jesús María. Juanjo Abregú es violinista.',
+'los alonsitos':'Los Alonsitos es una agrupación musical de Chamamé formada en Corrientes en 1985. Actualmente está integrada por Ariel Báez y los hermanos Marcelo Roselli Majul y Marco Roselli Majul. El nombre del grupo es en honor al profesor de música, Raúl Alonso.',
+'la callejera':'La Callejera es una agrupación de música folklórica de Argentina fundada en 2003 en la ciudad de Córdoba. Liderada por el músico Ariel "Chaco" Andrada, el conjunto posee un repertorio que integra diversos ritmos regionales del país.'
 };
-function key(n){return n.toLowerCase().trim()}
+/* ENLACES POR ARTISTA (opcional). La clave es el nombre en minúscula, igual que en B.
+   Campos (todos opcionales, completá solo los que existan):
+   web:'https://sitio.com'   ig:'usuario'   fb:'nombredelapagina'
+   wiki:'Titulo_del_articulo'   sp:'artist/ID' (o la URL completa de Spotify)
+   También podés pegar la URL completa en cualquier campo. */
+var L={
+'abel pintos':{wiki:'Abel_Pintos', sp:'artist/6HTUcOExehqydqa7C3usAa?si=4wM-GaSrRqiBwnv0o3pBdA'},
+'soledad':{wiki:'Soledad_Pastorutti', sp:'artist/0K59Fm1y7s3j498ueS4qzY?si=egpqGMLfRI-LCMz70815tg'},
+'cazzu':{wiki:'Cazzu', sp:'artist/6w3SkAHYPsQ1bxV7VDlG5y?si=eoPHyEtTSQOqoXVbQ0Od4w'},
+'los nocheros':{wiki:'Los_Nocheros', sp:'artist/2ydE5oBt6cwsDxH1TpIFmO?si=4CjsgDZ3QLGvZEvE8dsUDA'},
+'teresa parodi':{wiki:'Teresa_Parodi', sp:'artist/4D56DujhnBViJ4oYCSl1GK?si=78stqRljSECpOND306_xPw'},
+'peteco con riendas libres':{wiki:'Peteco_Carabajal', sp:'artist/5gii2fYcxLoUHWd1lWe4aT?si=rwCCQVhnQQaAUokBlW__Dw'},
+'chaqueño palavecino':{wiki:'Chaqueño_Palavecino', sp:'artist/1GlOpg3dPUft550esb82K3?si=3KLaj-NeRHKwkkpQT8_DAg'},
+'los manseros santiagueños':{wiki:'Los_Manseros_Santiagueños', sp:'artist/0IAWTLWnUIzKVQDTGoYJk2?si=nif5wtUmSAuxMBRo1Bc5UQ'},
+'los tekis':{wiki:'Los_Tekis', sp:'artist/0iutktJLkNNtErs8c3EoF6?si=xrWO3ptATgaJGLJvPm30-Q'},
+'nahuel pennisi':{wiki:'Nahuel_Pennisi', sp:'artist/4IjHltwoSKbUeZLPeULyDe?si=IxTnuKayRnW_C-oxVqo6zw'},
+'catherine vergnes':{web:'https://catherinevergnes.com/', sp:'artist/3dqxFNqXEaIA3janjTRoHW?si=4Z7CRAmYSyW6M4y7Z8OOGg', ig:'cathevergnes/'},
+'nicolás membriani':{ig:'nicomembriani/', sp:'artist/1glVxWkKaFiPQoSFvxj7Ar?si=76nQPNUpTzCSVXj_eM9WYA'},
+'juanjo abregú':{ig:'juanjo_abregu/', sp:'artist/5JfZnFShNLQVPbfYs7nwZP?si=yu_rMLEKRcOELWbAkJ_w5Q'},
+'los alonsitos':{web:'https://www.alonsitos.com/', ig:'LOSALONSITOS/', sp:'artist/1sObDTvhRtaW8yjty7sT7H?si=lTWPbUF1TwWpkxwdByCU5A', wiki:'Los_Alonsitos'},
+'la callejera':{sp:'artist/7EvR0pIRIeFrKd6lR6bJAR', wiki:'La_Callejera', ig:'lacallejeraoficial/'},
+'cuti y roberto carabajal':{sp:'artist/4GN1eZnMxHLMX8a7sBBbFc'},
+};
+var SVG={
+web:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3.500 3 3.500 15 0 18M12 3c-3.500 3-3.500 15 0 18"/></svg>',
+ig:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.500" cy="6.500" r="1.100" fill="currentColor" stroke="none"/></svg>',
+fb:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="currentColor"/><path d="M13.500 21v-7h2.400l.4-3h-2.800V9.300c0-.8.300-1.300 1.400-1.300h1.500V5.300C16 5.200 15.100 5 14.100 5 12 5 10.700 6.200 10.700 8.500V11H8.300v3h2.400v7z" fill="var(--card)"/></svg>',
+sp:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="currentColor"/><g fill="none" stroke="var(--card)" stroke-width="1.700" stroke-linecap="round"><path d="M6.500 9.200c3.700-1.100 8.200-.7 11.200 1.100"/><path d="M7.200 12.600c3-.8 6.200-.5 8.800 1"/><path d="M7.800 15.800c2.400-.6 4.700-.4 6.800.8"/></g></svg>',
+wiki:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.500" fill="none" stroke="currentColor" stroke-width="1.800"/><text x="12" y="16.500" font-size="12" font-family="Georgia,serif" font-weight="700" text-anchor="middle" fill="currentColor">W</text></svg>'
+};
+var SOC=[['web','Sitio web','--acc',function(v){return v}],
+['ig','Instagram','#d62976',function(v){return 'https://www.instagram.com/'+v}],
+['fb','Facebook','#1877f2',function(v){return 'https://www.facebook.com/'+v}],
+['wiki','Wikipedia','--ink',function(v){return 'https://es.wikipedia.org/wiki/'+v}],
+['sp','Spotify','#1db954',function(v){return 'https://open.spotify.com/'+v}]];
+function socFor(n){var l=L[key(n)];if(!l)return '';return '<div class="soc">'+SOC.filter(function(c){return l[c[0]]}).map(function(c){var v=l[c[0]],u=/^https?:/.test(v)?v:c[3](v),col=c[2].charAt(0)==='-'?'var('+c[2]+')':c[2];return '<a target="_blank" rel="noopener" aria-label="'+c[1]+'" title="'+c[1]+'" style="--c:'+col+'" href="'+esc(u)+'">'+SVG[c[0]]+'</a>'}).join('')+'</div>'}
+/* ALIAS: nombre del show (minúscula) → clave de B/L. Sirve cuando el título del show no es el nombre del artista. */
+var AL={'soledad 30 años (parte 1)':'soledad','soledad 30 años (parte 2)':'soledad'};
+function key(n){var k=n.toLowerCase().trim();return AL[k]||k}
 var $=function(i){return document.getElementById(i)};
 var S={day:'sab',stage:'all',fav:{},alerts:false,favonly:false,done:{}};
 try{var sv=JSON.parse(localStorage.getItem('rf26')||'{}');for(var k in sv)S[k]=sv[k]}catch(e){}
@@ -99,7 +144,7 @@ function save(){try{localStorage.setItem('rf26',JSON.stringify({fav:S.fav,alerts
 function ts(date,hm,afterStart){var p=hm.split(':'),d=new Date(date+'T'+hm+':00-03:00');if(+p[0]<6)d=new Date(d.getTime()+864e5);return d.getTime()}
 DAYS.forEach(function(d){d.s=d.s.map(function(r,i){var st=ts(d.date,r[1]),en=r[2]?ts(d.date,r[2]):st+30*60000;if(en<=st)en+=864e5;return{id:d.id+i,stage:r[0],h:r[1],e:r[2],name:r[3],st:st,en:en,pen:r[3]===PEN}}).sort(function(a,b){return a.st-b.st})});
 function curDay(){return DAYS.filter(function(d){return d.id===S.day})[0]}
-function bioFor(name){return name.split(/ \/ | \+ | - /).map(function(s){return s.trim()}).filter(function(s){return B[key(s)]}).map(function(s){return{n:s,b:B[key(s)]}})}
+function bioFor(name){return name.split(/ \/ | \+ | - /).map(function(s){return s.trim()}).filter(function(s){return B[key(s)]||L[key(s)]}).map(function(s){return{n:s,b:B[key(s)]||''}})}
 function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
 function render(){
   $('tabs').innerHTML=DAYS.map(function(d){return '<button class="tab'+(d.id===S.day?' on':'')+'" data-day="'+d.id+'">'+d.lab+'</button>'}).join('');
@@ -112,7 +157,7 @@ function render(){
 function findShow(id){var r;DAYS.forEach(function(d){d.s.forEach(function(s){if(s.id===id)r=s})});return r}
 function openSheet(id){var s=findShow(id),bs=s.pen?[]:bioFor(s.name),html='<button class="x" id="cl">✕</button><h2>'+esc(s.name)+'</h2><div class="meta">'+ST[s.stage][0]+' · '+s.h+(s.e?' a '+s.e:'')+'</div>';
   if(s.pen)html+='<p>Espacio abierto en La Pulpeña con peña, clases de danza y el Campeonato de Truco de la República durante toda la tarde.</p>';
-  else if(bs.length)html+=bs.map(function(x){return (bs.length>1?'<p><b>'+esc(x.n)+'</b></p>':'')+'<p>'+esc(x.b)+'</p>'}).join('');
+  else if(bs.length)html+=bs.map(function(x){return (bs.length>1?'<p><b>'+esc(x.n)+'</b></p>':'')+(x.b?'<p>'+esc(x.b)+'</p>':'')+socFor(x.n)}).join('');
   else html+='<p>Todavía no tenemos un resumen cargado para este artista.</p>';
   if(!s.pen)html+='<a class="lnk" target="_blank" rel="noopener" href="https://www.google.com/search?q='+encodeURIComponent(s.name.split(/ \/ | \+ | - /)[0]+' folklore biografía')+'">Buscar más sobre su carrera →</a>';
   $('sin').innerHTML=html;$('sheet').style.display='flex'}
